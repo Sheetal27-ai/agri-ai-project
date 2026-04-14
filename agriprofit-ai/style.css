@@ -1,0 +1,103 @@
+/* Custom Earthy Transitions and Animations */
+
+:root {
+    --forest: #2D5A27;
+    --sand: #F4EBD0;
+    --gold: #D4AF37;
+}
+
+body {
+    scroll-behavior: smooth;
+}
+
+/* Page Transitions */
+section {
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-out;
+}
+
+section.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+section:not(.hidden) {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Sidebar behavior */
+body.sidebar-active #sidebar {
+    transform: translateX(0);
+}
+
+body.sidebar-active #top-nav {
+    left: 256px;
+    width: calc(100% - 256px);
+}
+
+body.sidebar-active #content-area {
+    margin-left: 256px;
+}
+
+/* Landing Page Zoom Effect */
+.zoom-slow {
+    animation: zoom 60s infinite alternate linear;
+}
+
+@keyframes zoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
+}
+
+/* Nav Link Active State */
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid var(--gold);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--sand);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--forest);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1A3E16;
+}
+
+/* Glassmorphism utility */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Progress bar animation */
+.h-full.transition-all {
+    transition: width 1.5s cubic-bezier(0.17, 0.55, 0.55, 1);
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    body.sidebar-active #content-area {
+        margin-left: 0;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    
+    #top-nav {
+        width: 100% !important;
+        left: 0 !important;
+    }
+}
