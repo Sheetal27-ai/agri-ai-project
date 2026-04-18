@@ -77,5 +77,5 @@ def get_weather(location: str) -> dict:
 
 # test
 if __name__ == "__main__":
-    data = get_weather("Ludhiana")
+    data = get_weather("Patiala")
     print("Weather Data:", data)
