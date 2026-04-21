@@ -14,16 +14,16 @@ def predict_crops(soil_data, weather_data):
 
         # ================= FEATURE VECTOR =================
         feature_map = {
-            "N": soil_data["N"],
-            "P": soil_data["P"],
-            "K": soil_data["K"],
-            "ph": soil_data["ph"],
+            "N": soil_data.get("N", 0),
+            "P": soil_data.get("P", 0),
+            "K": soil_data.get("K", 0),
+            "ph": soil_data.get("ph", 7),
             "temperature": weather_data.get("temperature", 25),
             "humidity": weather_data.get("humidity", 60),
             "rainfall": weather_data.get("rainfall", 100),
-        }
+}
 
-        features = np.array([[feature_map.get(f, 0) for f in FEATURES]])
+        features = np.array([[float(feature_map.get(f, 0)) for f in FEATURES]])
 
         # ================= PREDICTION =================
         probs = model.predict_proba(features)[0]

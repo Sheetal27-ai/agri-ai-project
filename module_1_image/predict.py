@@ -85,11 +85,11 @@ def predict_soil(image_input):
 
     # ================= RETURN =================
     return {
-        "soil_type": soil_type,
-        "moisture": moisture,
-        "texture": texture,
-        "organic_content": organic_content
-    }
+        "N": N,
+        "P": P,
+        "K": K,
+        "ph": ph
+}
 
 
 # BACKWARD COMPATIBILITY
