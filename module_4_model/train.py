@@ -2,23 +2,21 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import pickle
 
-# Load dataset
+# ================= LOAD DATA =================
 data = pd.read_csv("data/crop_data.csv")
 
-# Features (input)
-X = data.drop("label", axis=1)
+# ================= FEATURE ORDER FIX =================
+FEATURES = ["N", "P", "K", "ph", "temperature", "humidity", "rainfall"]
 
-# Target (output)
+X = data[FEATURES]
 y = data["label"]
 
-# Create model
-model = RandomForestClassifier()
-
-# Train model
+# ================= MODEL =================
+model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)
 
-# Save model
+# ================= SAVE =================
 with open("module_4_model/crop_model.pkl", "wb") as f:
-    pickle.dump(model, f)
+    pickle.dump((model, FEATURES), f)
 
-print("✅ Model trained and saved!")
+print("✅ Model trained & saved with feature order!")

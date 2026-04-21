@@ -1,17 +1,36 @@
-def calculate_profit(crops: list) -> list:
+def _generate_insight(crop_name, weather):
     """
-    Takes top 3 crops from predict.py and adds profit data.
+    Generate simple AI insight based on weather
+    """
+    if not weather:
+        return "Suitable under average conditions"
+
+    temp = weather.get("temperature", 25)
+    rain = weather.get("rainfall", 100)
+
+    if crop_name in ["rice", "banana"] and rain > 150:
+        return "High rainfall favors this crop 🌧"
+    elif crop_name in ["wheat", "chickpea"] and temp < 25:
+        return "Cool temperature is beneficial ❄"
+    elif crop_name in ["cotton", "maize"] and temp > 30:
+        return "Warm climate is ideal ☀"
+    else:
+        return "Moderately suitable conditions"
+
+
+def calculate_profit(crops: list, weather_data=None) -> list:
+    """
+    Adds profit + insights to predicted crops
 
     Args:
-        crops: list of dicts → [{"crop": "rice", "confidence": 87.5}, ...]
+        crops: list → [{"crop": "rice", "confidence": 87.5}, ...]
+        weather_data: dict (optional)
 
     Returns:
-        list of dicts with profit added, sorted by profit descending
-        [{"crop": "rice", "confidence": 87.5, "profit": 40500}, ...]
+        list → [{"crop": ..., "confidence": ..., "profit": ..., "insight": ...}]
     """
 
-    # Yield (quintals/hectare), Price (₹/quintal), Cost (₹/hectare)
-    # All 22 crops from standard Kaggle crop recommendation dataset
+    # ================= CROP DATABASE =================
     CROP_DATA = {
         "rice":        {"yield": 25, "price": 2500, "cost": 22000},
         "maize":       {"yield": 35, "price": 1800, "cost": 18000},
@@ -36,7 +55,7 @@ def calculate_profit(crops: list) -> list:
         "jute":        {"yield": 15, "price": 3500, "cost": 20000},
         "coffee":      {"yield": 10, "price": 6000, "cost": 30000},
 
-        # extras from your original file
+        # extras
         "wheat":       {"yield": 30, "price": 2000, "cost": 20000},
         "sugarcane":   {"yield": 50, "price": 1500, "cost": 30000},
         "barley":      {"yield": 28, "price": 1700, "cost": 16000},
@@ -45,41 +64,53 @@ def calculate_profit(crops: list) -> list:
 
     results = []
 
+    # ================= MAIN LOOP =================
     for item in crops:
         crop_name = item["crop"]
         confidence = item["confidence"]
+
         data = CROP_DATA.get(crop_name.lower())
 
         if data:
             profit = (data["yield"] * data["price"]) - data["cost"]
         else:
-            # Crop not in table — still include it, profit unknown
             profit = None
 
+        insight = _generate_insight(crop_name.lower(), weather_data)
+
         results.append({
-            "crop":       crop_name,
+            "crop": crop_name,
             "confidence": confidence,
-            "profit":     profit        # ₹ per hectare, None if unknown
+            "profit": profit,
+            "insight": insight
         })
 
-    # Sort by profit descending (put None at end)
-    results.sort(key=lambda x: x["profit"] if x["profit"] is not None else -1, reverse=True)
+    # ================= SORT =================
+    results.sort(
+        key=lambda x: x["profit"] if x["profit"] is not None else -1,
+        reverse=True
+    )
 
     return results
 
 
-# Test
+# ================= TEST =================
 if __name__ == "__main__":
-    # Simulating output from predict.py
-    crops = [
-        {"crop": "muskmelon", "confidence": 49.0},
-        {"crop": "coffee",    "confidence": 15.0},
-        {"crop": "mothbeans", "confidence": 9.0}
+    sample_crops = [
+        {"crop": "rice", "confidence": 80},
+        {"crop": "maize", "confidence": 60},
+        {"crop": "coffee", "confidence": 40}
     ]
 
-    results = calculate_profit(crops)
+    sample_weather = {
+        "temperature": 32,
+        "humidity": 70,
+        "rainfall": 200
+    }
 
-    print("Final Ranked Crops (by profit):\n")
-    for i, r in enumerate(results, 1):
-        profit_str = f"₹{r['profit']:,}/hectare" if r["profit"] else "unknown"
-        print(f"  {i}. {r['crop']:<12} | Confidence: {r['confidence']}% | Profit: {profit_str}")
+    output = calculate_profit(sample_crops, sample_weather)
+
+    print("\n🌾 Final Results:\n")
+    for i, r in enumerate(output, 1):
+        profit_str = f"₹{r['profit']:,}" if r["profit"] else "Unknown"
+        print(f"{i}. {r['crop']} | Profit: {profit_str} | {r['insight']}")

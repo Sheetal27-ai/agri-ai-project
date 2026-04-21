@@ -1,64 +1,45 @@
 import pickle
-import pandas as pd
-import os
+import numpy as np
 
-# Always find crop_model.pkl regardless of where script is called from
-BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "module_4_model", "crop_model.pkl")
-
-# Load trained model
-with open(MODEL_PATH, "rb") as f:
-    model = pickle.load(f)
+# ================= LOAD MODEL =================
+with open("module_4_model/crop_model.pkl", "rb") as f:
+    model, FEATURES = pickle.load(f)
 
 
-def predict_crops(soil_data: dict, weather_data: dict) -> list:
-    """
-    Predict top 3 recommended crops.
+def predict_crops(soil_data, weather_data):
+    try:
+        # ================= VALIDATION =================
+        if not soil_data or not weather_data:
+            return []
 
-    Args:
-        soil_data:    dict with keys → N, P, K, ph
-        weather_data: dict with keys → temperature, humidity, rainfall
+        # ================= FEATURE VECTOR =================
+        feature_map = {
+            "N": soil_data["N"],
+            "P": soil_data["P"],
+            "K": soil_data["K"],
+            "ph": soil_data["ph"],
+            "temperature": weather_data["temperature"],
+            "humidity": weather_data["humidity"],
+            "rainfall": weather_data["rainfall"]
+        }
 
-    Returns:
-        List of top 3 crop names ranked by probability
-        e.g. ['rice', 'maize', 'cotton']
-    """
-    input_data = pd.DataFrame([{
-        "N":           soil_data["N"],
-        "P":           soil_data["P"],
-        "K":           soil_data["K"],
-        "temperature": weather_data["temperature"],
-        "humidity":    weather_data["humidity"],
-        "ph":          soil_data["ph"],
-        "rainfall":    weather_data["rainfall"]
-    }])
+        features = np.array([[feature_map[f] for f in FEATURES]])
 
-    # Get probabilities for all crops
-    probabilities = model.predict_proba(input_data)[0]
+        # ================= PREDICTION =================
+        probs = model.predict_proba(features)[0]
+        classes = model.classes_
 
-    # Get crop names
-    crops = model.classes_
+        top_indices = np.argsort(probs)[::-1][:3]
 
-    # Combine crop + probability and sort descending
-    crop_probs  = list(zip(crops, probabilities))
-    sorted_crops = sorted(crop_probs, key=lambda x: x[1], reverse=True)
+        results = []
+        for i in top_indices:
+            results.append({
+                "crop": classes[i],
+                "confidence": round(probs[i] * 100, 2)
+            })
 
-    # Return top 3 crop names with their confidence scores
-    top_3 = [
-        {"crop": crop, "confidence": round(prob * 100, 2)}
-        for crop, prob in sorted_crops[:3]
-    ]
+        return results
 
-    return top_3
-
-
-# Test
-if __name__ == "__main__":
-    soil    = {"N": 90, "P": 42, "K": 43, "ph": 6.5}
-    weather = {"temperature": 32.05, "humidity": 31, "rainfall": 15.0}
-
-    results = predict_crops(soil, weather)
-
-    print("Top 3 Recommended Crops:")
-    for i, r in enumerate(results, 1):
-        print(f"  {i}. {r['crop']}  ({r['confidence']}% confidence)")
+    except Exception as e:
+        print("Prediction error:", e)
+        return []
