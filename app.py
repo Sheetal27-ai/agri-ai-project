@@ -1,6 +1,6 @@
 import streamlit as st
 from module_1_image.predict import predict_soil
-from module_2_soil.soil_map import get_soil_data
+from module_2_soil.soil_data import get_soil_data
 from module_3_weather.weather import get_weather
 from module_4_model.predict import predict_crops
 from module_5_profit.profit import calculate_profit

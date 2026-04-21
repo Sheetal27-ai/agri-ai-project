@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriVision Pro | Smart Farming Dashboard</title>
+    <link rel="stylesheet" href="chatbot.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        /* Mock Dashboard Sidebar */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #2e7d32;
+            color: white;
+            position: fixed;
+            padding: 20px;
+        }
+
+        .sidebar h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 290px;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            color: #2e7d32;
+        }
+
+        p { color: #666; line-height: 1.6; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .stat-label { font-size: 0.9rem; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1>AgriVision Pro</h1>
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item">Soil Analysis</div>
+        <div class="nav-item">Weather Watch</div>
+        <div class="nav-item">Market Prices</div>
+        <div class="nav-item">Financial ROI</div>
+    </div>
+
+    <div class="main-content">
+        <h2>Welcome back, Farmer!</h2>
+        <p>Your AgriVision Pro system is monitoring your land in real-time. Here's your summary for today.</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-val">Loamy</div>
+                <div class="stat-label">Soil Type</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">22%</div>
+                <div class="stat-label">Moisture</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">31°C</div>
+                <div class="stat-label">Temperature</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">₹48,200</div>
+                <div class="stat-label">Est. Profit</div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 30px;">
+            <h3>Latest Recommendation</h3>
+            <p>Based on the latest soil and weather parameters, <strong>Wheat</strong> remains your top recommended crop for this cycle. Nitrogen levels are optimal, and the upcoming cool spell will favor seedling development.</p>
+        </div>
+    </div>
+
+    <!-- Chatbot UI Components -->
+    <button class="chatbot-toggler">
+        <span class="material-symbols-rounded">💬</span>
+    </button>
+    <div class="chatbot">
+        <header>
+            <h2>AgriBot Assistant</h2>
+        </header>
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <p>Hi there! 👋 I'm your AgriVision assistant. How can I help you today with your soil or crops?</p>
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="Ask about soil, crops..." spellcheck="false" required></textarea>
+            <span id="send-btn">➔</span>
+        </div>
+    </div>
+
+    <script src="chatbot.js"></script>
+</body>
+</html>
