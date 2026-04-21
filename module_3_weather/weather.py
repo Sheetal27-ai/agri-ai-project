@@ -37,23 +37,31 @@ def _get_monthly_rainfall(city: str, month: int) -> float:
         return float(india_avg[month - 1])
 
 
-def get_weather(location: str) -> dict:
+def get_weather(location: str = None, lat: float = None, lon: float = None) -> dict:
     """
     Fetch real-time temperature & humidity.
     Uses historical rainfall for ML consistency.
     """
 
-    print(f"🌦 Fetching weather for {location}...")
+    print(f"🌦 Fetching weather for {location if location else f'lat={lat}, lon={lon}'}...")
 
     # If API key missing → fallback immediately
     if not API_KEY:
         print("⚠ API key missing. Using fallback weather data.")
         return _fallback_weather(location)
 
-    params = {
-        "q": location,
-        "appid": API_KEY,
-        "units": "metric"
+    if lat is not None and lon is not None:
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": API_KEY,
+            "units": "metric"
+    }
+    else:
+        params = {
+            "q": location,
+            "appid": API_KEY,
+            "units": "metric"
     }
 
     try:
@@ -68,19 +76,20 @@ def get_weather(location: str) -> dict:
         data = response.json()
 
         current_month = datetime.datetime.now().month
+        city_name = data.get("name", location if location else "unknown")
+        rainfall = _get_monthly_rainfall(city_name, current_month)
 
         return {
             "temperature": float(data["main"]["temp"]),
             "humidity": float(data["main"]["humidity"]),
-            "rainfall": _get_monthly_rainfall(location, current_month),
-            "city": data.get("name", location),
+            "rainfall": rainfall,
+            "city": city_name,
             "description": data["weather"][0]["description"]
         }
 
     except Exception as e:
         print(f"⚠ Weather API failed: {e}")
         return _fallback_weather(location)
-
 
 def _fallback_weather(location: str) -> dict:
     """
@@ -89,11 +98,14 @@ def _fallback_weather(location: str) -> dict:
     """
     current_month = datetime.datetime.now().month
 
+    # ✅ Handle missing location safely
+    safe_location = location if location else "Unknown"
+
     return {
         "temperature": 25.0,
         "humidity": 60.0,
-        "rainfall": _get_monthly_rainfall(location, current_month),
-        "city": location,
+        "rainfall": _get_monthly_rainfall(safe_location, current_month),
+        "city": safe_location if location else "Unknown Location",
         "description": "fallback data"
     }
 

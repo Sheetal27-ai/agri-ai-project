@@ -66,24 +66,24 @@ def calculate_profit(crops: list, weather_data=None) -> list:
 
     # ================= MAIN LOOP =================
     for item in crops:
-        crop_name = item["crop"]
-        confidence = item["confidence"]
+        crop_name = item["crop"].lower()
+        confidence = item.get("confidence", 0)
 
-        data = CROP_DATA.get(crop_name.lower())
+        data = CROP_DATA.get(crop_name)
 
         if data:
             profit = (data["yield"] * data["price"]) - data["cost"]
         else:
             profit = None
 
-        insight = _generate_insight(crop_name.lower(), weather_data)
+        insight = _generate_insight(crop_name, weather_data)
 
         results.append({
             "crop": crop_name,
             "confidence": confidence,
             "profit": profit,
             "insight": insight
-        })
+    })
 
     # ================= SORT =================
     results.sort(

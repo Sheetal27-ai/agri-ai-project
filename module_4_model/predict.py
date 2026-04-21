@@ -18,12 +18,12 @@ def predict_crops(soil_data, weather_data):
             "P": soil_data["P"],
             "K": soil_data["K"],
             "ph": soil_data["ph"],
-            "temperature": weather_data["temperature"],
-            "humidity": weather_data["humidity"],
-            "rainfall": weather_data["rainfall"]
+            "temperature": weather_data.get("temperature", 25),
+            "humidity": weather_data.get("humidity", 60),
+            "rainfall": weather_data.get("rainfall", 100),
         }
 
-        features = np.array([[feature_map[f] for f in FEATURES]])
+        features = np.array([[feature_map.get(f, 0) for f in FEATURES]])
 
         # ================= PREDICTION =================
         probs = model.predict_proba(features)[0]
@@ -34,7 +34,7 @@ def predict_crops(soil_data, weather_data):
         results = []
         for i in top_indices:
             results.append({
-                "crop": classes[i],
+                "crop": classes[i].lower(),
                 "confidence": round(probs[i] * 100, 2)
             })
 
