@@ -10,6 +10,7 @@ The system provides:
 * 🧪 Fertilizer suggestions
 * ⏱️ Optimal sowing time
 * 📄 Soil Health Card (PDF/Image) analysis
+* Market Analysis
 
 
 ## 🎯 Problem Statement
